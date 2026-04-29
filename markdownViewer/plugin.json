@@ -1,0 +1,19 @@
+{
+    "id": "markdownViewer",
+    "name": "File Viewer",
+    "description": "Quick file previewer with fuzzy search and syntax highlighting",
+    "version": "0.1.0",
+    "author": "viewerofall",
+    "icon": "description",
+    "type": "launcher",
+    "capabilities": ["launcher"],
+    "component": "./MarkdownLauncher.qml",
+    "settings": "./MarkdownSettings.qml",
+    "trigger": "\\",
+    "requires_dms": ">0.1.18",
+    "permissions": [
+        "settings_read",
+        "settings_write",
+        "filesystem_read"
+    ]
+}
