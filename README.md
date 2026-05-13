@@ -25,6 +25,16 @@ A file preview launcher plugin with markdown rendering and syntax highlighting f
 
 [File Viewer README](./markdownViewer/README.md)
 
+### Converter
+A launcher plugin to convert most units to really any unit, no you cant convert weight to temperature
+
+**Status**: Stable
+**Features**: Convert alot of units to another unit type, like farenheit to celsius
+**Trigger**: "`" 
+**Location**: /converter
+
+[Converter README](./converter/README.md)
+
 ## Installation
 
 Each plugin can be installed independently:

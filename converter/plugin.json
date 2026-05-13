@@ -1,0 +1,15 @@
+{
+  "id": "converter",
+  "name": "Converter",
+  "description": "Universal unit converter - distance, temperature, weight, speed, and more",
+  "version": "1.0.0",
+  "author": "abyss",
+  "icon": "compare_arrows",
+  "type": "launcher",
+  "trigger": "`",
+  "viewMode": "list",
+  "viewModeEnforced": false,
+  "component": "./Converter.qml",
+  "settings": "./ConverterSettings.qml",
+  "permissions": ["settings_read", "settings_write"]
+}
