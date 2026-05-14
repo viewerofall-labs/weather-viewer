@@ -9,7 +9,7 @@ import qs.Modules.Plugins
 PluginComponent {
     id: root
     
-    layerNamespacePlugin: "uptime-bar"
+    layerNamespacePlugin: "uptimeBar"
 
     property bool showSeconds: pluginData.showSeconds ?? true
     property bool showDays: pluginData.showDays ?? true

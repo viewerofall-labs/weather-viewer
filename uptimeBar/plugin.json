@@ -1,5 +1,5 @@
 {
-  "id": "uptime-bar",
+  "id": "uptimeBar",
   "name": "Uptime Bar",
   "description": "Display system uptime in a sleek bubble. Shows days, hours, minutes, and optionally seconds.",
   "version": "1.1.3",

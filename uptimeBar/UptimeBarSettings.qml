@@ -5,7 +5,7 @@ import qs.Modules.Plugins
 
 PluginSettings {
     id: root
-    pluginId: "uptime-bar"
+    pluginId: "uptimeBar"
 
     StyledText {
         width: parent.width

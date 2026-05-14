@@ -27,7 +27,7 @@ Open **Settings → Plugins → Uptime Bar**.
 
 ## Install / reload
 
-Copy this folder under your DMS plugins directory, e.g. `~/.config/DankMaterialShell/plugins/uptimeBar`, then reload plugins from DMS (or restart the shell) so `uptime-bar` is picked up.
+Copy this folder under your DMS plugins directory, e.g. `~/.config/DankMaterialShell/plugins/uptimeBar`, then reload plugins from DMS (or restart the shell) so **`uptimeBar`** is picked up.
 
 ## Requirements
 
