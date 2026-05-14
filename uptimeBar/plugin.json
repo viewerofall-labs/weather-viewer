@@ -1,0 +1,14 @@
+{
+  "id": "uptime-bar",
+  "name": "Uptime Bar",
+  "description": "Display system uptime in a sleek bubble. Shows days, hours, minutes, and optionally seconds.",
+  "version": "1.1.3",
+  "author": "abyss (viewerofall)",
+  "type": "widget",
+  "capabilities": ["dankbar-widget"],
+  "component": "./UptimeBar.qml",
+  "settings": "./UptimeBarSettings.qml",
+  "icon": "schedule",
+  "requires_dms": ">=1.4.0",
+  "permissions": ["settings_read", "settings_write", "filesystem_read"]
+}

@@ -32,23 +32,21 @@ Item {
         return path
     }
 
-    function getListerBinary() {
-        return "/home/abyss/.config/DankMaterialShell/plugins/markdownViewer/bin/dms-lister-amd64"
+    function getFileListScript() {
+        return expandPath("~/.config/DankMaterialShell/plugins/markdownViewer/dms-file-lister.py")
     }
 
-    function listDirectory(dirPath) {
+    function runCommand(cmd) {
         let tempFile = "/tmp/dms_list_" + Math.random().toString(36).substring(7) + ".json"
-        let binary = getListerBinary()
-        let escapedPath = dirPath.replace(/'/g, "'\\''")
-        let cmd = "'" + binary + "' '" + escapedPath + "' > " + tempFile + " 2>/dev/null"
+        let fullCmd = cmd + " > " + tempFile + " 2>/dev/null"
 
-        // Execute synchronously-ish with sleep to ensure completion
-        Quickshell.execDetached(["sh", "-c", cmd + " && sleep 0.2"])
+        // Execute command
+        Quickshell.execDetached(["sh", "-c", fullCmd + " && sleep 0.1"])
 
-        // Give it time to complete
+        // Wait for file to be written
         let start = Date.now()
-        while (Date.now() - start < 300) {
-            // Busy wait - not ideal but ensures data is ready
+        while (Date.now() - start < 500) {
+            // Busy wait - ensures data is ready
         }
 
         // Read the result
@@ -59,15 +57,41 @@ Item {
 
             if (xhr.status === 200 && xhr.responseText) {
                 let data = JSON.parse(xhr.responseText)
-                if (data.files) {
-                    return data.files
-                }
+                // Clean up temp file
+                Quickshell.execDetached(["rm", "-f", tempFile])
+                return data
             }
         } catch (e) {
-            console.warn("Error listing " + dirPath + ": " + e)
+            console.warn("Error reading result: " + e)
+            Quickshell.execDetached(["rm", "-f", tempFile])
         }
 
-        return []
+        return { files: [], error: "unknown error" }
+    }
+
+    function listDirectory(dirPath) {
+        let script = getFileListScript()
+        let escapedPath = dirPath.replace(/'/g, "'\\''")
+        let cmd = "python3 '" + script + "' list '" + escapedPath + "'"
+        
+        return runCommand(cmd)
+    }
+
+    function searchMarkdownFiles(dirPath, query) {
+        let script = getFileListScript()
+        let escapedPath = dirPath.replace(/'/g, "'\\''")
+        let escapedQuery = (query || "").replace(/'/g, "'\\''")
+        let cmd = "python3 '" + script + "' search '" + escapedPath + "' '" + escapedQuery + "'"
+        
+        return runCommand(cmd)
+    }
+
+    function readFile(filePath) {
+        let script = getFileListScript()
+        let escapedPath = filePath.replace(/'/g, "'\\''")
+        let cmd = "python3 '" + script + "' read '" + escapedPath + "'"
+        
+        return runCommand(cmd)
     }
 
     function getItems(query) {
@@ -78,97 +102,85 @@ Item {
             cleanQuery = cleanQuery.substring(1).trim()
         }
 
-        if (!cleanQuery || cleanQuery.length === 0) {
-            // List home directory
-            let files = listDirectory(homeDir)
-            if (files.length > 0) {
-                items = files.map(f => ({
-                    name: f.name,
-                    icon: f.isDir ? "material:folder" : "material:description",
-                    comment: f.path,
-                    action: "open:" + f.path,
-                    categories: ["FileViewer"]
-                }))
-            } else {
-                items = [{
-                    name: "Home directory empty",
-                    icon: "material:folder",
-                    comment: homeDir,
-                    action: "noop:",
-                    categories: ["FileViewer"]
-                }]
-            }
+        // Determine search path
+        let searchPaths = [
+            expandPath("~/.scratchpad/notes"),
+            expandPath("~/"),
+            expandPath("~/repos")
+        ]
 
-        } else if (cleanQuery.includes("/")) {
-            // Directory path
-            let expandedPath = expandPath(cleanQuery)
-            let files = listDirectory(expandedPath)
+        // Try each search path
+        for (let i = 0; i < searchPaths.length; i++) {
+            let result = searchMarkdownFiles(searchPaths[i], cleanQuery)
+            
+            if (result.files && result.files.length > 0) {
+                for (let j = 0; j < Math.min(result.files.length, 10); j++) {
+                    let file = result.files[j]
+                    let preview = ""
 
-            if (files.length > 0) {
-                items = files.map(f => ({
-                    name: f.name,
-                    icon: f.isDir ? "material:folder" : "material:description",
-                    comment: f.path,
-                    action: "open:" + f.path,
-                    categories: ["FileViewer"]
-                }))
-            } else {
-                items = [{
-                    name: expandedPath + " not found or empty",
-                    icon: "material:folder",
-                    comment: expandedPath,
-                    action: "noop:",
-                    categories: ["FileViewer"]
-                }]
-            }
+                    // Try to get preview for markdown files
+                    if (file.name.toLowerCase().endsWith('.md')) {
+                        let readResult = readFile(file.path)
+                        if (readResult.content) {
+                            preview = readResult.content.split('\n')[0].substring(0, 80)
+                        }
+                    }
 
-        } else {
-            // Search mode - filter home directory
-            let files = listDirectory(homeDir)
-            let searchTerm = cleanQuery.toLowerCase()
-
-            if (files.length > 0) {
-                let results = files.filter(f => f.name.toLowerCase().includes(searchTerm))
-                if (results.length > 0) {
-                    items = results.map(f => ({
-                        name: f.name,
-                        icon: f.isDir ? "material:folder" : "material:description",
-                        comment: f.path,
-                        action: "open:" + f.path,
-                        categories: ["FileViewer"]
-                    }))
-                } else {
-                    items = [{
-                        name: 'No matches for "' + cleanQuery + '"',
-                        icon: "material:search",
-                        comment: "Try another search",
-                        action: "noop:",
-                        categories: ["FileViewer"]
-                    }]
+                    items.push({
+                        id: "file_" + i + "_" + j,
+                        name: file.name,
+                        comment: (file.isDir ? "[DIR] " : "") + (preview ? preview : file.path),
+                        icon: file.isDir ? "folder" : "description",
+                        actions: [{
+                            id: "open",
+                            text: "Open",
+                            callback: function() {
+                                openFile(file.path)
+                            }
+                        }]
+                    })
                 }
-            } else {
-                items = [{
-                    name: "Home directory empty",
-                    icon: "material:folder",
-                    comment: homeDir,
-                    action: "noop:",
-                    categories: ["FileViewer"]
-                }]
+                return items
+            }
+        }
+
+        // If no results, list current directory
+        let homeResult = listDirectory(expandPath("~/"))
+        if (homeResult.files) {
+            for (let i = 0; i < Math.min(homeResult.files.length, 10); i++) {
+                let file = homeResult.files[i]
+                items.push({
+                    id: "file_" + i,
+                    name: file.name,
+                    comment: (file.isDir ? "[DIR] " : "") + file.path,
+                    icon: file.isDir ? "folder" : "description",
+                    actions: [{
+                        id: "open",
+                        text: "Open",
+                        callback: function() {
+                            openFile(file.path)
+                        }
+                    }]
+                })
             }
         }
 
         return items
     }
 
-    function executeItem(item) {
-        if (!item || !item.action) return
+    function openFile(filePath) {
+        // Check if it's a markdown file
+        if (filePath.toLowerCase().endsWith('.md')) {
+            // Open in default text editor or viewer
+            Quickshell.execDetached(["xdg-open", filePath])
+        } else if (Qt.platform.os === "linux") {
+            Quickshell.execDetached(["xdg-open", filePath])
+        }
+    }
 
-        let action = item.action
-        if (action.startsWith("open:")) {
-            let filePath = action.substring(5)
-            if (filePath && filePath.length > 0) {
-                Quickshell.execDetached(["xdg-open", filePath])
-            }
+    function executeItem(item) {
+        if (item.actions && item.actions.length > 0) {
+            item.actions[0].callback()
         }
     }
 }

@@ -2,7 +2,7 @@
     "id": "markdownViewer",
     "name": "File Viewer",
     "description": "Quick file previewer with fuzzy search and syntax highlighting",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "author": "viewerofall",
     "icon": "description",
     "type": "launcher",
@@ -11,6 +11,7 @@
     "settings": "./MarkdownSettings.qml",
     "trigger": "\\",
     "requires_dms": ">0.1.18",
+    "requires": ["python3"],
     "permissions": [
         "settings_read",
         "settings_write",
