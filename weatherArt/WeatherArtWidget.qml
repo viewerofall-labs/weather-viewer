@@ -19,14 +19,12 @@ DesktopPluginComponent {
     property bool showTemp: pluginData.showTemp ?? true
     property bool showFeelsLike: pluginData.showFeelsLike ?? true
     property bool showHumidity: pluginData.showHumidity ?? true
-    property bool showWind: pluginData.showWind ?? true
     property bool showPressure: pluginData.showPressure ?? false
     property bool showSunrise: pluginData.showSunrise ?? true
     property bool showSunset: pluginData.showSunset ?? true
 
     readonly property bool weatherAvailable: WeatherService.weather.available
     readonly property var weather: WeatherService.weather
-    readonly property real tempF: weather.temp ? (weather.temp * 9 / 5) + 32 : 0
 
     readonly property color bgSkyTop: backgroundStyle === "oneshot" ? "#0c0a30" : (backgroundStyle === "dms" ? Qt.darker(Theme.surface, 1.5) : "transparent")
     readonly property color bgSkyMid: backgroundStyle === "oneshot" ? "#3a1a5c" : (backgroundStyle === "dms" ? Theme.surfaceContainer : "transparent")
@@ -101,7 +99,6 @@ DesktopPluginComponent {
     function getQuip() {
         if (!weatherAvailable) return "no weather data..."
         const type = isNight() ? "night" : getWeatherType()
-        const feelsF = weather.feelsLike ? Math.round((weather.feelsLike * 9 / 5) + 32) : null
         switch (type) {
             case "thunderstorm": return "⚡ stay inside. seriously."
             case "rainy":        return "it's rainy out today..."
@@ -109,36 +106,20 @@ DesktopPluginComponent {
             case "cloudy":       return "kinda grey out there"
             case "hot":          return "IM MELTING WHY IS IT SO HOT"
             case "night":        return "quiet night out there"
-            case "sunny":        return (feelsF && feelsF > 85) ? "IM MELTING WHY IS IT SO HOT" : "nice day actually"
+            case "sunny":        return (weather.feelsLike && weather.feelsLike > 29) ? "IM MELTING WHY IS IT SO HOT" : "nice day actually"
             default:             return "just vibing"
         }
-    }
-
-    function getWindArrow() {
-        if (!weather || !weather.windDirection) return "↔"
-        const dir = Number(weather.windDirection)
-        if (isNaN(dir)) return "↔"
-        if (dir >= 337.5 || dir < 22.5) return "↓"
-        if (dir >= 22.5 && dir < 67.5) return "↙"
-        if (dir >= 67.5 && dir < 112.5) return "←"
-        if (dir >= 112.5 && dir < 157.5) return "↖"
-        if (dir >= 157.5 && dir < 202.5) return "↑"
-        if (dir >= 202.5 && dir < 247.5) return "↗"
-        if (dir >= 247.5 && dir < 292.5) return "→"
-        if (dir >= 292.5 && dir < 337.5) return "↘"
-        return "↔"
     }
 
     function getStats() {
         if (!weatherAvailable) return ""
         const parts = []
-        if (showTemp) parts.push(Math.round(root.tempF) + "°F")
-        if (showFeelsLike && weather.feelsLike) parts.push("feels " + Math.round((weather.feelsLike * 9/5)+32) + "°")
+        if (showTemp) parts.push(WeatherService.formatTemp(weather.temp, true, false))
+        if (showFeelsLike && weather.feelsLike != null) parts.push("feels " + WeatherService.formatTemp(weather.feelsLike))
         if (showHumidity && weather.humidity) parts.push(WeatherService.formatPercent(weather.humidity) + " humid")
-        if (showWind && weather.wind) parts.push(root.getWindArrow() + " " + WeatherService.formatSpeed(weather.wind))
-        if (showPressure && weather.pressure) parts.push(Math.round(weather.pressure) + " mb")
-        if (showSunrise && weather.sunrise) parts.push("↑" + weather.sunrise)
-        if (showSunset && weather.sunset) parts.push("↓" + weather.sunset)
+        if (showPressure && weather.pressure) parts.push(WeatherService.formatPressure(weather.pressure))
+        if (showSunrise && weather.sunrise) parts.push("▲" + weather.sunrise)
+        if (showSunset && weather.sunset) parts.push("▼" + weather.sunset)
         if (weather.city) parts.push(weather.city)
         return parts.join("  •  ")
     }
