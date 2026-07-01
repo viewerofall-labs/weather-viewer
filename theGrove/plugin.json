@@ -1,0 +1,19 @@
+{
+    "id": "theGrove",
+    "name": "theGrove",
+    "description": "A living tree on your desktop that grows as long as DankMaterialShell does",
+    "version": "1.0.0",
+    "author": "viewerofall",
+    "type": "desktop",
+    "capabilities": ["desktop-widget", "ambient"],
+    "component": "./GroveWidget.qml",
+    "icon": "park",
+    "settings": "./GroveSettings.qml",
+    "requires_dms": ">=1.2.0",
+    "requires": ["notify-send"],
+    "permissions": [
+        "settings_read",
+        "settings_write",
+        "process"
+    ]
+}
