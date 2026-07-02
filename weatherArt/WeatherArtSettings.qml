@@ -28,10 +28,19 @@ PluginSettings {
     }
 
     SliderSetting {
-        settingKey: "fontScale"
-        label: I18n.tr("Font Scale")
+        settingKey: "pictureScale"
+        label: I18n.tr("Picture Scale")
         defaultValue: 165
         minimum: 100
+        maximum: 250
+        unit: "%"
+    }
+
+    SliderSetting {
+        settingKey: "textScale"
+        label: I18n.tr("Text Size")
+        defaultValue: 100
+        minimum: 50
         maximum: 250
         unit: "%"
     }

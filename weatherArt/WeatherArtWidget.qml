@@ -13,7 +13,8 @@ DesktopPluginComponent {
 
     property string backgroundStyle: pluginData.backgroundStyle ?? "oneshot"
     property real backgroundOpacity: (pluginData.backgroundOpacity ?? 70) / 100
-    property real fontScale: (pluginData.fontScale ?? 165) / 100
+    property real pictureScale: (pluginData.pictureScale ?? 165) / 100
+    property real textScale: (pluginData.textScale ?? 100) / 100
     property int updateInterval: pluginData.updateInterval ?? 60
     property bool showQuip: pluginData.showQuip ?? true
     property bool showTemp: pluginData.showTemp ?? true
@@ -76,7 +77,8 @@ DesktopPluginComponent {
         if (wCode >= 45 && wCode <= 48) return "cloudy"
         if (wCode === 0 || wCode === 1) return "sunny"
         if (wCode === 2 || wCode === 3) return "cloudy"
-        if (temp > 30) return "hot"
+        const tempF = weather.tempF ?? (temp * 9 / 5 + 32)
+        if (tempF >= 90) return "hot"
         return "sunny"
     }
 
@@ -106,7 +108,7 @@ DesktopPluginComponent {
             case "cloudy":       return "kinda grey out there"
             case "hot":          return "IM MELTING WHY IS IT SO HOT"
             case "night":        return "quiet night out there"
-            case "sunny":        return (weather.feelsLike && weather.feelsLike > 29) ? "IM MELTING WHY IS IT SO HOT" : "nice day actually"
+            case "sunny":        return (weather.feelsLikeF && weather.feelsLikeF >= 90) ? "IM MELTING WHY IS IT SO HOT" : "nice day actually"
             default:             return "just vibing"
         }
     }
@@ -173,7 +175,7 @@ DesktopPluginComponent {
                 const lines = root.getScene().art.length
                 const availHeight = height
                 const baseDiv = 1.65
-                const scaled = baseDiv / root.fontScale
+                const scaled = baseDiv / root.pictureScale
                 return Math.max(10, Math.floor(availHeight / (lines * scaled)))
             }
             color: root.artColor
@@ -195,7 +197,7 @@ DesktopPluginComponent {
             width: parent.width
             height: root.showQuip ? parent.height * 0.10 : 0
             font.family: "monospace"
-            font.pixelSize: Math.max(8, Math.floor(parent.height / 24))
+            font.pixelSize: Math.max(8, Math.floor(parent.height / 24 * root.textScale))
             font.italic: true
             color: root.quipColor
             text: root.getQuip()
@@ -207,7 +209,7 @@ DesktopPluginComponent {
             width: parent.width
             height: root.weatherAvailable && root.getStats() !== "" ? parent.height * 0.10 : 0
             font.family: "monospace"
-            font.pixelSize: Math.max(8, Math.floor(parent.height / 24))
+            font.pixelSize: Math.max(8, Math.floor(parent.height / 24 * root.textScale))
             font.bold: true
             color: root.statColor
             text: root.getStats()
