@@ -82,6 +82,17 @@ PluginSettings {
         defaultValue: "sprout"
     }
 
+    DankButton {
+        text: I18n.tr("Fast-Forward 1 Day")
+        buttonHeight: 36
+        onClicked: {
+            const firstLaunchDate = root.loadValue("firstLaunchDate", "");
+            const lastWatered = root.loadValue("lastWatered", "");
+            root.saveValue("firstLaunchDate", Grove.shiftIsoByHours(firstLaunchDate, 24, Date.now()));
+            root.saveValue("lastWatered", Grove.shiftIsoByHours(lastWatered, 24, Date.now()));
+        }
+    }
+
     Item {
         width: parent ? parent.width : 0
         height: resetColumn.implicitHeight

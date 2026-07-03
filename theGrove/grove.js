@@ -101,6 +101,16 @@ function alreadyThirstyTimestamp(intervalHours, nowMs) {
     return new Date(now - intervalHours * 3600000 - 60000).toISOString();
 }
 
+// Shifts an ISO timestamp backward by the given number of hours, simulating
+// time having passed. Falls back to "now" if the timestamp is missing/invalid.
+function shiftIsoByHours(iso, hours, nowMs) {
+    var now = nowMs === undefined ? Date.now() : nowMs;
+    var base = iso ? Date.parse(iso) : NaN;
+    if (isNaN(base))
+        base = now;
+    return new Date(base - hours * 3600000).toISOString();
+}
+
 function formatCountdown(hoursRemaining) {
     if (hoursRemaining <= 0)
         return "Thirsty";
