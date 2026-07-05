@@ -128,7 +128,7 @@ theGrove/
 
 theGrove reads DMS theme variables at runtime — no hardcoded colors. It looks correct on any DMS theme out of the box.
 
-Pairs especially well with [Deep Sage](https://github.com/viewerofall/dms-themes) where the tree renders in natural sage-toned bark and leaf colors via matugen.
+Pairs especially well with [Deep Sage](https://github.com/AvengeMedia/dms-plugin-registry/tree/master/themes/deepsage)where the tree renders in natural sage-toned bark and leaf colors via matugen.
 
 ---
 
