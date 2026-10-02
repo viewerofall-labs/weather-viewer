@@ -39,8 +39,7 @@ Item {
         volume: ["ul", "ml", "l", "cl", "dl", "tsp", "tbsp", "fl oz", "cup", "pint", "pt", "quart", "qt", "gal", "barrel"],
         area: ["mm2", "cm2", "m2", "km2", "in2", "ft2", "yd2", "mi2", "acre", "hectare"],
         energy: ["j", "kj", "cal", "kcal", "wh", "kwh", "ev"],
-        temperature: ["c", "f", "k"],
-        color: ["rgb", "hex", "hsv", "hsl"]
+        temperature: ["c", "f", "k"]
     })
 
     Component.onCompleted: {
@@ -108,7 +107,7 @@ Item {
             return [{
                 name: "Converter",
                 icon: "material:compare_arrows",
-                comment: "Format: 5m-km or #fff-rgb",
+                comment: "Format: 5m-km",
                 categories: ["Converter"]
             }]
         }

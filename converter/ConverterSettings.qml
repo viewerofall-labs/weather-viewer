@@ -17,7 +17,7 @@ PluginSettings {
 
     StyledText {
         width: parent.width
-        text: "Universal converter for distance, weight, temperature, speed, volume, area, energy, and color."
+        text: "Universal converter for distance, weight, temperature, speed, volume, area, and energy."
         font.pixelSize: Theme.fontSizeSmall
         color: Theme.surfaceVariantText
         wrapMode: Text.WordWrap
@@ -143,22 +143,6 @@ PluginSettings {
         wrapMode: Text.WordWrap
     }
 
-    StyledText {
-        width: parent.width
-        text: "Color"
-        font.pixelSize: Theme.fontSizeMedium
-        font.weight: Font.SemiBold
-        color: Theme.surfaceText
-        topPadding: Theme.spacingM
-    }
-
-    StyledText {
-        width: parent.width
-        text: "hex, rgb, hsv, hsl"
-        font.pixelSize: Theme.fontSizeSmall
-        color: Theme.surfaceVariantText
-        wrapMode: Text.WordWrap
-    }
 
     StyledText {
         width: parent.width
@@ -196,12 +180,4 @@ PluginSettings {
         font.family: "monospace"
     }
 
-    StyledText {
-        width: parent.width
-        text: "`#ff00ff-rgb"
-        font.pixelSize: Theme.fontSizeSmall
-        color: Theme.primary
-        wrapMode: Text.WordWrap
-        font.family: "monospace"
-    }
 }
